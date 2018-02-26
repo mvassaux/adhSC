@@ -4,6 +4,8 @@ Mechanical model of a single adherent Stem Cell based on the tensegrity theory. 
 
 The model is built and simulated using the [LMGC90](https://git-xen.lmgc.univ-montp2.fr/lmgc90/lmgc90_user/wikis/home) software written in Python. Additional scripts are provided to manage the workflow
 
+<img src="https://github.com/mvassaux/mvassaux.github.io/raw/master/static/intra-cell_forces_blutens-redcomp.png" width="300" />
+
 ## Execution of the model
 
 Beforehand, LMGC90 must be installed on the machine following these [instructions](https://git-xen.lmgc.univ-montp2.fr/lmgc90/lmgc90_user/wikis/download_and_install).
