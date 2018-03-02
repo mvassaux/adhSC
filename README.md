@@ -6,7 +6,9 @@ Mechanical model of a single adherent Mesenchymal Stem Cell based on the tensegr
 
 > Maxime Vassaux and Jean-Louis Milan. [*Stem cell mechanical behaviour modelling: substrate’s curvature influence during adhesion.*](https://doi.org/10.1007/s10237-017-0888-4) Biomechanics and modeling in mechanobiology, 16 (2017): 1295-1308. 
 
-The model is built and simulated using the [LMGC90](https://git-xen.lmgc.univ-montp2.fr/lmgc90/lmgc90_user/wikis/home) software written in Python. Additional scripts are provided to manage the workflow
+In case of using the model, please cite the above publication.
+
+The model is built and simulated using the [LMGC90](https://git-xen.lmgc.univ-montp2.fr/lmgc90/lmgc90_user/wikis/home) software written in Python. Additional scripts are provided to manage the workflow.
 
 ## Execution of the model
 
