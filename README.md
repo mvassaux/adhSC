@@ -2,7 +2,11 @@
 
 <img src="https://github.com/mvassaux/mvassaux.github.io/raw/master/static/intra-cell_forces_blutens-redcomp.png" align="right" width="300" /> 
 
-Mechanical model of a single adherent Mesenchymal Stem Cell based on the tensegrity theory. The cell, its constituents (nucleus, cytoskeleton, cytosol, and membrane) are described as particles interacting by means of contact, cable or spring. Calibration and checking against experiments has been featured in the following publication:
+A mechanical model of a single adherent Mesenchymal Stem Cell based on the tensegrity theory. The cell, its constituents (nucleus, cytoskeleton, cytosol, and membrane) are described as particles interacting by means of contact, cable or spring. Adhesion is performed in two steps (phases):  
+1. the cell is generated in an elliptical configuration and spread onto the substrate
+2. the cell is left in place for a sufficiently long to stabilise
+
+Calibration and checking against experiments has been featured in the following publication:
 
 > Maxime Vassaux and Jean-Louis Milan. [*Stem cell mechanical behaviour modelling: substrate’s curvature influence during adhesion.*](https://doi.org/10.1007/s10237-017-0888-4) Biomechanics and modeling in mechanobiology, 16 (2017): 1295-1308. 
 
