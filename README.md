@@ -1,5 +1,9 @@
 # adhSC
 
+
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1187087.svg)](https://doi.org/10.5281/zenodo.1187087)
+
 <img src="https://github.com/mvassaux/mvassaux.github.io/raw/master/static/intra-cell_forces_blutens-redcomp.png" align="right" width="300" /> 
 
 A mechanical model of a single adherent Mesenchymal Stem Cell based on the tensegrity theory. The cell, its constituents (nucleus, cytoskeleton, cytosol, and membrane) are described as particles interacting by means of contact, cable or spring. Adhesion is performed in two steps (phases):  
