@@ -1,3 +1,4 @@
 # Things to be done
-- write a complete, descriptive README for all future users (including students)
-- add files: model, post-treatment, workflow
+- add all post-treatment scripts in `post/`
+- add different substratums
+- add migration workflow
