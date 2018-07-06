@@ -8,6 +8,17 @@ import numpy
 # Initializing
 #Initialize()
 
+def compute_poteng(field1, field2):
+    W=0.
+    for ibdyty in range(RBDY3_GetNbRBDY3()):
+        ff1 = RBDY3_GetBodyVector(field1,ibdyty+1)
+        ff2 = RBDY3_GetBodyVector(field2,ibdyty+1)
+        for ii in range(len(ff1)):
+            W += -0.5*ff1[ii]*ff2[ii]
+
+    print(field1,"x",field2,W)
+    return W
+
 # checking/creating mandatory subfolders
 checkDirectories()
 
@@ -152,6 +163,16 @@ for k in range(0,nb_steps):
 
   WriteDisplayFiles(freq_display,lref)
   WritePostproFiles()
+
+  # Check energies in the system
+  KE = postpro_3D_GetKineticEnergy()
+  print(KE)
+
+  # Computes PE = -0.5*field1*field2
+  PE = compute_poteng("X____","Reac_")
+
+  # if PE>PE_tsh:
+  #     break
 
 WriteLastDof()
 WriteLastVlocRloc()
