@@ -78,20 +78,14 @@ mod.addModel(modr)
 diam_cell = 30.
 diam_core = diam_cell/1.5
 lref = diam_cell/60.
-diam_cm1 = 2.5*(diam_cell)
-diam_cm2 = 2.5*(diam_cell)
 xctr_cell = 0.
 yctr_cell = 0.
 zctr_cell = 0.
-zctr_cm1 = +1*(diam_cm1/2.-0.75*diam_cell/2.)
-zctr_cm2 = -1*(diam_cm2/2.-0.75*diam_cell/2.)
 center_cell=numpy.array([xctr_cell, yctr_cell, zctr_cell])
 ctsl_part_radii = 3.0*lref
 celb_part_radii = 3.0*lref
 celb_part_gap = 1.0*celb_part_radii
 radii_celb = diam_cell/2. + celb_part_radii
-radii_cm1 = diam_cm1/2 + celb_part_radii
-radii_cm2 = diam_cm2/2 + celb_part_radii
 
 ## Nucleus dimensions
 core_part_radii = 1.5*lref
@@ -127,28 +121,13 @@ shoot_cone_angle = math.pi/2.
 
 ## Focal adhesions parameters
 shift_amp_prot = 3.0
-nb_focals = 30
+nb_focals = 8
 nb_focals_ptour = 10
 nb_fibres = 0
 coor_focals = numpy.zeros((3*nb_focals+1), dtype='f')
 coor_protei = numpy.zeros((3*nb_focals+1), dtype='f')
 seen_focals = numpy.zeros((nb_focals+1), dtype='i')
 numfibre_focals = numpy.zeros((nb_focals+1), dtype='i')
-
-# Generating substrate particles
-px=-1.*lxsubst/2. + xctr_subst
-npxinc = int((lxsubst)/subst_part_gap)
-for i in range(0,npxinc,1):
-   py=-1.*lysubst/2. + yctr_subst
-   npyinc = int((lysubst)/subst_part_gap)
-   for j in range(0,npyinc,1):
-      pz = zctr_subst
-      body=rigidSphere(r=1.*subst_part_radii, center=numpy.array([px,py,pz]), model=modr, material=tdur, color='SUBST')
-      body.imposeDrivenDof(component=[1, 2, 3], dofty='vlocy')
-      bodies1 += body
-      bodies2 += body
-      py += (lysubst)/npyinc
-   px += (lxsubst)/npxinc
 
 # Generating nucleus membrane particles
 nphiinc = int(math.pi*radii_corb/corb_part_gap)
@@ -190,17 +169,17 @@ for i in range(0,core_part_nb,1):
       ce_ls.append(body)
 
 # Generating cell membrane particles
-nphiinc = int(math.pi*radii_cm1/celb_part_gap)
+nphiinc = int(math.pi*radii_celb/celb_part_gap)
 phi=-1*math.pi/2.
 for i in range(0,nphiinc,1):
-   nthetainc = 2*int(math.pi*radii_cm1*math.cos(phi)/celb_part_gap)
+   nthetainc = 2*int(math.pi*radii_celb*math.cos(phi)/celb_part_gap)
    theta=0.
    for j in range(0,nthetainc,1):
-      if((zctr_cm1+(radii_cm1)*(math.sin(phi))) < zctr_cell):
+      if((zctr_cell+(radii_celb)*(math.sin(phi))) < zctr_cell):
          body=rigidSphere(r=celb_part_radii,
-            center=numpy.array([(xctr_cell+(radii_cm1)*(math.cos(phi)*math.cos(theta))),
-                                (yctr_cell+(radii_cm1)*(math.cos(phi)*math.sin(theta))),
-                                (zctr_cm1+(radii_cm1)*(math.sin(phi)))]),
+            center=numpy.array([(xctr_cell+(radii_celb)*(math.cos(phi)*math.cos(theta))),
+                                (yctr_cell+(radii_celb)*(math.cos(phi)*math.sin(theta))),
+                                (zctr_cell+(radii_celb)*(math.sin(phi)))]),
             model=modr, material=cell, color='BCELs')
          body.addContactors(shape='PT3Dx', color='BCELp')
          body.addContactors(shape='SPHER', color='BCELt', byrd=celb_part_radii/10.)
@@ -209,17 +188,17 @@ for i in range(0,nphiinc,1):
          ce_ls.append(body)
       theta += 2*math.pi/nthetainc
    phi += math.pi/nphiinc
-nphiinc = int(math.pi*radii_cm2/celb_part_gap)
+nphiinc = int(math.pi*radii_celb/celb_part_gap)
 phi=-1*math.pi/2.
 for i in range(0,nphiinc,1):
-   nthetainc = 2*int(math.pi*radii_cm2*math.cos(phi)/celb_part_gap)
+   nthetainc = 2*int(math.pi*radii_celb*math.cos(phi)/celb_part_gap)
    theta=0.
    for j in range(0,nthetainc,1):
-      if((zctr_cm2+(radii_cm2)*(math.sin(phi))) > zctr_cell):
+      if((zctr_cell+(radii_celb)*(math.sin(phi))) > zctr_cell):
          body=rigidSphere(r=celb_part_radii,
-            center=numpy.array([(xctr_cell+(radii_cm2)*(math.cos(phi)*math.cos(theta))),
-                                (yctr_cell+(radii_cm2)*(math.cos(phi)*math.sin(theta))),
-                                (zctr_cm2+(radii_cm2)*(math.sin(phi)))]),
+            center=numpy.array([(xctr_cell+(radii_celb)*(math.cos(phi)*math.cos(theta))),
+                                (yctr_cell+(radii_celb)*(math.cos(phi)*math.sin(theta))),
+                                (zctr_cell+(radii_celb)*(math.sin(phi)))]),
             model=modr, material=cell, color='BCELs')
          body.addContactors(shape='PT3Dx', color='BCELp')
          body.addContactors(shape='SPHER', color='BCELt', byrd=celb_part_radii/10.)
@@ -237,12 +216,10 @@ while (ctsl_part_nb < 100):
 for i in range(0,ctsl_part_nb,1):
    px = xctr_cell + ctsl_part_coor[3*i + 0]
    py = yctr_cell + ctsl_part_coor[3*i + 1]
-   pz = zctr_cell + ctsl_part_coor[3*i + 2] - diam_cell/2.
+   pz = zctr_cell + ctsl_part_coor[3*i + 2]
    dist_cell_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cell)**2.0)**0.5
-   dist_cm1_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cm1)**2.0)**0.5
-   dist_cm2_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cm2)**2.0)**0.5
    if((dist_cell_cntr - ctsl_part_rlst[i] > diam_core/2. + core_part_radii) and
-      (dist_cm1_cntr + ctsl_part_rlst[i] < diam_cm1/2.) and (dist_cm2_cntr + ctsl_part_rlst[i] < diam_cm2/2.)):
+      (dist_cell_cntr + ctsl_part_rlst[i] < diam_cell/2.)):
       body = rigidSphere(r=ctsl_part_rlst[i], center=numpy.array([px, py, pz]),
                       model=modr, material=cell, color='CTSLs')
       body.addContactors(shape='PT3Dx', color='CTSLp')
@@ -250,38 +227,95 @@ for i in range(0,ctsl_part_nb,1):
       bodies2 += body
       ce_ls.append(body)
 
-# Creation d'une distribution de points focaux dans le plan de l'enveloppe ventrale de la cellule et du substrat
-# Generating the focal adhesions particles in the ventral part of the cell membrane
-# and at their binding position on the substrate
-random.seed(seed_fo)
-radii_circ = 0.
-for i in range(0,nb_focals,1):
-   nb_tours = int(nb_focals/nb_focals_ptour)
-   rad = radii_celb - int(i/nb_focals_ptour)*(radii_celb/nb_tours)
-   theta = 2*i*math.pi/nb_focals_ptour
+#Proposition de modif du gen sampl pour deformer la cellule en cube : 
 
-   px = xctr_cell + shift_amp_prot*(rad*math.cos(theta))
-   py = yctr_cell + shift_amp_prot*(rad*math.sin(theta))
+phi=math.pi/4.
+theta=math.pi/2.
+rad=radii_celb + celb_part_gap
 
-   coor_protei[3*i + 0] = px
-   coor_protei[3*i + 1] = py
-   coor_protei[3*i + 2] = zctr_subst
+i=-1
+j=1
+k=0
+coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
+coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap 
+coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
+coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
+coor_focals[3*k + 2] = rad*-1.*(1./3.)**0.5
+coor_protei[3*k + 2] = rad*-1.*(1./3.)**0.5 + ((rad*-1.*(1./3.)**0.5)**2.0)**0.5/(rad*-1.*(1./3.)**0.5)*2.*celb_part_gap
 
-   dist_cell_cntr = ((coor_protei[3*i + 0]-xctr_cell)**2.0+(coor_protei[3*i + 1]-yctr_cell)**2.0)**0.5
-   if(dist_cell_cntr > radii_circ):
-      radii_circ = dist_cell_cntr
+ 
+i=-1
+j=2
+k=1
+coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
+coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap 
+coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
+coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
+coor_focals[3*k + 2] = rad*-1.*(1./3.)**0.5
+coor_protei[3*k + 2] = rad*-1.*(1./3.)**0.5 + ((rad*-1.*(1./3.)**0.5)**2.0)**0.5/(rad*-1.*(1./3.)**0.5)*2.*celb_part_gap
+ 
+i=-1
+j=3
+k=2
+coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
+coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap 
+coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
+coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
+coor_focals[3*k + 2] = rad*-1.*(1./3.)**0.5
+coor_protei[3*k + 2] = rad*-1.*(1./3.)**0.5 + ((rad*-1.*(1./3.)**0.5)**2.0)**0.5/(rad*-1.*(1./3.)**0.5)*2.*celb_part_gap
+ 
+i=-1
+j=4
+k=3
+coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
+coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap 
+coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
+coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
+coor_focals[3*k + 2] = rad*-1.*(1./3.)**0.5
+coor_protei[3*k + 2] = rad*-1.*(1./3.)**0.5 + ((rad*-1.*(1./3.)**0.5)**2.0)**0.5/(rad*-1.*(1./3.)**0.5)*2.*celb_part_gap
+ 
+i=1
+j=1
+k=4
+coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
+coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap 
+coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
+coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
+coor_focals[3*k + 2] = rad*(1./3.)**0.5
+coor_protei[3*k + 2] = rad*(1./3.)**0.5 + ((rad*(1./3.)**0.5)**2.0)**0.5/(rad*(1./3.)**0.5)*2.*celb_part_gap
 
-for i in range(0,nb_focals,1):
-   dist_cell_cntr = ((coor_protei[3*i + 0]-xctr_cell)**2.0+(coor_protei[3*i + 1]-yctr_cell)**2.0)**0.5
-   rad = radii_cm1
-   theta = (1.*math.pi/4.)*(dist_cell_cntr/radii_circ)
+i=1
+j=2
+k=5
+coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
+coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap 
+coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
+coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
+coor_focals[3*k + 2] = rad*(1./3.)**0.5
+coor_protei[3*k + 2] = rad*(1./3.)**0.5 + ((rad*(1./3.)**0.5)**2.0)**0.5/(rad*(1./3.)**0.5)*2.*celb_part_gap
 
-   proj_dist_cell_cntr = rad*math.sin(theta)
+i=1
+j=3
+k=6
+coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
+coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap 
+coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
+coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
+coor_focals[3*k + 2] = rad*(1./3.)**0.5
+coor_protei[3*k + 2] = rad*(1./3.)**0.5 + ((rad*(1./3.)**0.5)**2.0)**0.5/(rad*(1./3.)**0.5)*2.*celb_part_gap
 
-   coor_focals[3*i + 0] = (proj_dist_cell_cntr/dist_cell_cntr)*(coor_protei[3*i + 0] - xctr_cell) + xctr_cell
-   coor_focals[3*i + 1] = (proj_dist_cell_cntr/dist_cell_cntr)*(coor_protei[3*i + 1] - yctr_cell) + yctr_cell
-   coor_focals[3*i + 2] = -1*rad*math.cos(theta) + zctr_cm1
+i=1
+j=4
+k=7
+coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
+coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap 
+coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
+coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
+coor_focals[3*k + 2] = rad*(1./3.)**0.5
+coor_protei[3*k + 2] = rad*(1./3.)**0.5 + ((rad*(1./3.)**0.5)**2.0)**0.5/(rad*(1./3.)**0.5)*2.*celb_part_gap
 
+
+ 
 for i in range(0,nb_focals,1):
    for phase in range(0,2,1):
       body=rigidSphere(r=1.*celb_part_radii,
@@ -289,6 +323,28 @@ for i in range(0,nb_focals,1):
                     model=modr, material=cell, color='INTEs')
       nami='I{1:{0}}'.format("04d",i)
       body.addContactors(shape='PT3Dx', color=nami)
+      body.addContactors(shape='PT3Dx', color='FOCAL')
+      if (phase == 0):
+         ce_ls.append(body)
+         fa_ls.append(body)
+      if (phase == 0):
+         charinc = charinc_sprd
+#         vspread = 1.
+#         hspread = 1.
+         bodies1 += body
+      elif (phase == 1):
+         charinc = charinc_stbl
+#         vspread = 0.
+#         hspread = 0.
+         bodies2 += body
+ 
+for i in range(0,nb_focals,1):
+   for phase in range(0,2,1):
+      body=rigidSphere(r=1.*celb_part_radii,
+                    center=numpy.array([coor_protei[3*i+0], coor_protei[3*i+1], coor_protei [3*i+2]]),
+                    model=modr, material=cell, color='PROTs')
+      nami='I{1:{0}}'.format("04d",i)
+      body.addContactors(shape='PT3Dx', color='PROTp')
       if (phase == 0):
          ce_ls.append(body)
          fa_ls.append(body)
@@ -302,26 +358,25 @@ for i in range(0,nb_focals,1):
          vspread = 0.
          hspread = 0.
          bodies2 += body
-      body.imposeDrivenDof(component=1, description='predefined', ct=charinc*(coor_protei[3*i + 0]-coor_focals[3*i + 0]), amp=0., omega=0., phi=0., rampi=hspread, ramp=0., dofty='vlocy')
-      body.imposeDrivenDof(component=2, description='predefined', ct=charinc*(coor_protei[3*i + 1]-coor_focals[3*i + 1]), amp=0., omega=0., phi=0., rampi=hspread, ramp=0., dofty='vlocy')
-      body.imposeDrivenDof(component=3, description='predefined', ct=charinc*(coor_protei[3*i + 2]-coor_focals[3*i + 2]), amp=0., omega=0., phi=0., rampi=vspread, ramp=0., dofty='vlocy')
+      body.imposeDrivenDof(component=1, description='predefined', ct=charinc*coor_protei[3*i + 0], amp=0., omega=0., phi=0., rampi=hspread, ramp=0., dofty='vlocy')
+      body.imposeDrivenDof(component=2, description='predefined', ct=charinc*coor_protei[3*i + 1], amp=0., omega=0., phi=0., rampi=hspread, ramp=0., dofty='vlocy')
+      body.imposeDrivenDof(component=3, description='predefined', ct=charinc*coor_protei[3*i + 2], amp=0., omega=0., phi=0., rampi=vspread, ramp=0., dofty='vlocy')
+ 
 
 # Generating the particles of the microfilaments network (randomly oriented and
 # homogeneously distributed in the radial direction)
 random.seed(seed_mf)
 for i in range(0,nb_nodes_mf,1):
   while 1:
-     rad = random.uniform(diam_core/2.+ 2.*corb_part_radii+radii_part_networks, max(diam_cm1,diam_cm2)/2-radii_part_networks)
+     rad = random.uniform(diam_core/2.+ 2.*corb_part_radii+radii_part_networks, diam_cell/2-radii_part_networks)
      theta = random.uniform(0., 2.*math.pi)
      phi = random.uniform(-math.pi/2., math.pi/2.)
      px = xctr_cell+(rad)*(math.cos(phi)*math.cos(theta))
      py = yctr_cell+(rad)*(math.cos(phi)*math.sin(theta))
      pz = zctr_cell+(rad)*(math.sin(phi))
      dist_cell_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cell)**2.0)**0.5
-     dist_cm1_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cm1)**2.0)**0.5
-     dist_cm2_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cm2)**2.0)**0.5
      if((dist_cell_cntr - radii_part_networks > diam_core/2. + core_part_radii) and
-        (dist_cm1_cntr + radii_part_networks < diam_cm1/2.) and (dist_cm2_cntr + radii_part_networks < diam_cm2/2.)):
+        (dist_cell_cntr + radii_part_networks < diam_cell/2.)):
         break
   center_mf_node=numpy.array([px, py, pz])
 
@@ -340,7 +395,7 @@ dir_theta = random.uniform(-math.pi/2., math.pi/2.)
 
 for i in range(0,nb_nodes_mt,1):
   while 1:
-     rad = random.uniform(diam_core/2.+ 2.*corb_part_radii+radii_part_networks, max(diam_cm1,diam_cm2)/2.-radii_part_networks)
+     rad = random.uniform(diam_core/2.+ 2.*corb_part_radii+radii_part_networks, diam_cell/2.-radii_part_networks)
      while 1:
          theta = random.gauss(dir_theta, math.pi/2.)
          if (theta>dir_theta-math.pi and theta<dir_theta+math.pi):
@@ -353,10 +408,8 @@ for i in range(0,nb_nodes_mt,1):
      py = yctr_cell+(rad)*(math.cos(phi)*math.sin(theta))
      pz = zctr_cell+(rad)*(math.sin(phi))
      dist_cell_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cell)**2.0)**0.5
-     dist_cm1_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cm1)**2.0)**0.5
-     dist_cm2_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cm2)**2.0)**0.5
      if((dist_cell_cntr - radii_part_networks > diam_core/2. + core_part_radii) and
-        (dist_cm1_cntr + radii_part_networks < diam_cm1/2.) and (dist_cm2_cntr + radii_part_networks < diam_cm2/2.)):
+        (dist_cell_cntr + radii_part_networks < diam_cell/2.)):
         break
   center_mt_node=numpy.array([px, py, pz])
 
@@ -368,129 +421,129 @@ for i in range(0,nb_nodes_mt,1):
   bodies2 += body
   ce_ls.append(body)
 
-# # Generating the particles of the microfilaments network (randomly oriented and
-# # heterogeneously distributed in the radial direction)
-# random.seed(seed_if)
-#
-# for i in range(0,nb_nodes_if,1):
-#   while 1:
-#      while 1:
-#         rad = random.gauss(diam_core/2.+2*corb_part_radii, diam_cell/2.)
-#         if (rad>diam_core/2 + 2.*corb_part_radii + radii_part_networks and rad<max(diam_cm1,diam_cm2)/2-radii_part_networks):
-#             break
-#      theta = random.uniform(0., 2.*math.pi)
-#      phi = random.uniform(-math.pi/2., math.pi/2.)
-#      px = xctr_cell+(rad)*(math.cos(phi)*math.cos(theta))
-#      py = yctr_cell+(rad)*(math.cos(phi)*math.sin(theta))
-#      pz = zctr_cell+(rad)*(math.sin(phi))
-#      dist_cell_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cell)**2.0)**0.5
-#      dist_cm1_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cm1)**2.0)**0.5
-#      dist_cm2_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cm2)**2.0)**0.5
-#      if((dist_cell_cntr - radii_part_networks > diam_core/2. + core_part_radii) and
-#         (dist_cm1_cntr + radii_part_networks < diam_cm1/2.) and (dist_cm2_cntr + radii_part_networks < diam_cm2/2.)):
-#         break
-#   center_if_node=numpy.array([px, py, pz])
-#
-#   body=rigidSphere(r=radii_part_networks, center=center_if_node,
-#         model=modr, material=cell, color='IFsxx')
-#   body.addContactors(shape='PT3Dx', color='IFpxx')
-#
-#   bodies1 += body
-#   bodies2 += body
-#   ce_ls.append(body)
-#
-# # Generating the stress fibres as random chains of particles
-# seen_focals = numpy.zeros((nb_focals+1), dtype='i')
-# numfibre_focals = numpy.zeros((nb_focals+1), dtype='i')
-# nfibre = 0
-# for i in range(0,nb_focals,1):
-#   npart_fibre = 0
-#   if(seen_focals[i] == 0):
-#      numfibre_focals[i] = nfibre
-#      seen_focals[i] = 1
-#
-#      ax = coor_focals[3*i+0]
-#      ay = coor_focals[3*i+1]
-#      az = coor_focals[3*i+2]
-#
-#      dist_cell_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cell)**2.0)**0.5
-#      phi_ref = math.asin((zctr_cell-az)/(dist_cell_cntr))
-#
-#      cos_theta_ref = (xctr_cell-ax)/(dist_cell_cntr*math.cos(phi_ref))
-#      sin_theta_ref = (yctr_cell-ay)/(dist_cell_cntr*math.cos(phi_ref))
-#      if (sin_theta_ref > 0.):
-#         theta_ref = math.acos(cos_theta_ref)
-#      else:
-#         theta_ref = 2.*math.pi - math.acos(cos_theta_ref)
-#
-#      while 1:
-#         ox = ax
-#         oy = ay
-#         oz = az
-#
-#         ntry = 0
-#         while (ntry < 10000):
-#            rad = random.uniform(sf_inc_min, sf_inc_max)
-#            theta = random.uniform(-1*shoot_cone_angle, shoot_cone_angle)
-#            phi = random.uniform(-1*shoot_cone_angle, shoot_cone_angle)
-#
-#            ax = ox + (rad)*(math.cos(phi+phi_ref)*(math.cos(theta+theta_ref)))
-#            ay = oy + (rad)*(math.cos(phi+phi_ref)*(math.sin(theta+theta_ref)))
-#            az = oz + (rad)*(math.sin(phi+phi_ref))
-#
-#            dist_cell_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cell)**2.0)**0.5
-#            dist_cm1_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cm1)**2.0)**0.5
-#            dist_cm2_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cm2)**2.0)**0.5
-#            if((dist_cell_cntr - fibers_part_radii > diam_core/2. + core_part_radii) and
-#               (dist_cm1_cntr + fibers_part_radii < diam_cm1/2.) and (dist_cm2_cntr + fibers_part_radii < diam_cm2/2.)):
-#               break
-#            if (ntry == 5001):
-#                theta_ref = -1.*theta_ref
-#                phi_ref = -1.*phi_ref
-#
-#         center_sf_node = numpy.array([ax, ay, az])
-#         name='Ss{1:{0}}'.format("03d",nfibre)
-#         body=rigidSphere(r=1.*fibers_part_radii, center=center_sf_node,
-#            model=modr, material=cell, color=name)
-#
-#         dist_min_unseen_focal = diam_cell/2.
-#         closest_focal = i
-#         for j in range(0,nb_focals,1):
-#            if(seen_focals[j] == 0):
-#               dist_unseen_focal = ((ax-coor_focals[2*j])**2.0+(ay-coor_focals[2*j+1])**2.0)**0.5
-#               if(dist_unseen_focal < dist_min_unseen_focal):
-#                  dist_min_unseen_focal = dist_unseen_focal
-#                  closest_focal = j
-#         dist_cm1_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cm1)**2.0)**0.5
-#         dist_cm2_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cm2)**2.0)**0.5
-#         dist_env1 = diam_cm1/2. - dist_cm1_cntr - fibers_part_radii
-#         dist_env2 = diam_cm2/2. - dist_cm2_cntr - fibers_part_radii
-#
-#         if(ntry < 10000):
-#            if((dist_env1 < celb_part_radii or dist_env2 < celb_part_radii) and npart_fibre > 20): ## pour eviter la fin trop rapide de la generation
-#               name='Se{1:{0}}'.format("03d",nfibre) ## point enveloppe dorsale
-#               body.addContactors(shape='PT3Dx', color=name)
-#               break
-#            else:
-#               if (npart_fibre == 0):
-#                  name='Sf{1:{0}}'.format("03d",nfibre) ## point sur point focal
-#                  body.addContactors(shape='PT3Dx', color=name)
-#               else:
-#                  name='Sp{1:{0}}'.format("03d",nfibre) ## point interne
-#                  body.addContactors(shape='PT3Dx', color=name)
-#
-#               bodies1 += body
-#               bodies2 += body
-#               ce_ls.append(body)
-#            npart_fibre += 1
-#         else:
-#            sys.exit("Error message ntry exceed 10000")
-#
-#      bodies1 += body
-#      bodies2 += body
-#      ce_ls.append(body)
-#      nfibre +=1
-# nb_fibres = nfibre
+# Generating the particles of the intermediate filaments network (randomly oriented and
+# normally distributed in the radial direction centered on the nucleus diameter, only keeping particle outside the nucleus)
+random.seed(seed_if)
+
+for i in range(0,nb_nodes_if,1):
+  while 1:
+     while 1:
+        rad = random.gauss(diam_core/2.+2*corb_part_radii, diam_cell/2.)
+        if (rad>diam_core/2 + 2.*corb_part_radii + radii_part_networks and rad<max(diam_cell,diam_cm2)/2-radii_part_networks):
+            break
+     theta = random.uniform(0., 2.*math.pi)
+     phi = random.uniform(-math.pi/2., math.pi/2.)
+     px = xctr_cell+(rad)*(math.cos(phi)*math.cos(theta))
+     py = yctr_cell+(rad)*(math.cos(phi)*math.sin(theta))
+     pz = zctr_cell+(rad)*(math.sin(phi))
+     dist_cell_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cell)**2.0)**0.5
+     dist_cell_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cm1)**2.0)**0.5
+     dist_cm2_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cm2)**2.0)**0.5
+     if((dist_cell_cntr - radii_part_networks > diam_core/2. + core_part_radii) and
+        (dist_cell_cntr + radii_part_networks < diam_cell/2.) and (dist_cm2_cntr + radii_part_networks < diam_cm2/2.)):
+        break
+  center_if_node=numpy.array([px, py, pz])
+
+  body=rigidSphere(r=radii_part_networks, center=center_if_node,
+        model=modr, material=cell, color='IFsxx')
+  body.addContactors(shape='PT3Dx', color='IFpxx')
+
+  bodies1 += body
+  bodies2 += body
+  ce_ls.append(body)
+
+# Generating the stress fibres as random chains of particles
+seen_focals = numpy.zeros((nb_focals+1), dtype='i')
+numfibre_focals = numpy.zeros((nb_focals+1), dtype='i')
+nfibre = 0
+for i in range(0,nb_focals,1):
+  npart_fibre = 0
+  if(seen_focals[i] == 0):
+     numfibre_focals[i] = nfibre
+     seen_focals[i] = 1
+
+     ax = coor_focals[3*i+0]
+     ay = coor_focals[3*i+1]
+     az = coor_focals[3*i+2]
+
+     dist_cell_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cell)**2.0)**0.5
+     phi_ref = math.asin((zctr_cell-az)/(dist_cell_cntr))
+
+     cos_theta_ref = (xctr_cell-ax)/(dist_cell_cntr*math.cos(phi_ref))
+     sin_theta_ref = (yctr_cell-ay)/(dist_cell_cntr*math.cos(phi_ref))
+     if (sin_theta_ref > 0.):
+        theta_ref = math.acos(cos_theta_ref)
+     else:
+        theta_ref = 2.*math.pi - math.acos(cos_theta_ref)
+
+     while 1:
+        ox = ax
+        oy = ay
+        oz = az
+
+        ntry = 0
+        while (ntry < 10000):
+           rad = random.uniform(sf_inc_min, sf_inc_max)
+           theta = random.uniform(-1*shoot_cone_angle, shoot_cone_angle)
+           phi = random.uniform(-1*shoot_cone_angle, shoot_cone_angle)
+
+           ax = ox + (rad)*(math.cos(phi+phi_ref)*(math.cos(theta+theta_ref)))
+           ay = oy + (rad)*(math.cos(phi+phi_ref)*(math.sin(theta+theta_ref)))
+           az = oz + (rad)*(math.sin(phi+phi_ref))
+
+           dist_cell_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cell)**2.0)**0.5
+           dist_cell_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cm1)**2.0)**0.5
+           dist_cm2_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cm2)**2.0)**0.5
+           if((dist_cell_cntr - fibers_part_radii > diam_core/2. + core_part_radii) and
+              (dist_cell_cntr + fibers_part_radii < diam_cell/2.) and (dist_cm2_cntr + fibers_part_radii < diam_cm2/2.)):
+              break
+           if (ntry == 5001):
+               theta_ref = -1.*theta_ref
+               phi_ref = -1.*phi_ref
+
+        center_sf_node = numpy.array([ax, ay, az])
+        name='Ss{1:{0}}'.format("03d",nfibre)
+        body=rigidSphere(r=1.*fibers_part_radii, center=center_sf_node,
+           model=modr, material=cell, color=name)
+
+        dist_min_unseen_focal = diam_cell/2.
+        closest_focal = i
+        for j in range(0,nb_focals,1):
+           if(seen_focals[j] == 0):
+              dist_unseen_focal = ((ax-coor_focals[2*j])**2.0+(ay-coor_focals[2*j+1])**2.0)**0.5
+              if(dist_unseen_focal < dist_min_unseen_focal):
+                 dist_min_unseen_focal = dist_unseen_focal
+                 closest_focal = j
+        dist_cell_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cm1)**2.0)**0.5
+        dist_cm2_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cm2)**2.0)**0.5
+        dist_env1 = diam_cell/2. - dist_cell_cntr - fibers_part_radii
+        dist_env2 = diam_cm2/2. - dist_cm2_cntr - fibers_part_radii
+
+        if(ntry < 10000):
+           if((dist_env1 < celb_part_radii or dist_env2 < celb_part_radii) and npart_fibre > 20): ## pour eviter la fin trop rapide de la generation
+              name='Se{1:{0}}'.format("03d",nfibre) ## point enveloppe dorsale
+              body.addContactors(shape='PT3Dx', color=name)
+              break
+           else:
+              if (npart_fibre == 0):
+                 name='Sf{1:{0}}'.format("03d",nfibre) ## point sur point focal
+                 body.addContactors(shape='PT3Dx', color=name)
+              else:
+                 name='Sp{1:{0}}'.format("03d",nfibre) ## point interne
+                 body.addContactors(shape='PT3Dx', color=name)
+
+              bodies1 += body
+              bodies2 += body
+              ce_ls.append(body)
+           npart_fibre += 1
+        else:
+           sys.exit("Error message ntry exceed 10000")
+
+     bodies1 += body
+     bodies2 += body
+     ce_ls.append(body)
+     nfibre +=1
+nb_fibres = nfibre
 
 
 # Generating particles interactions in both phases
@@ -535,6 +588,9 @@ for i in range(0,2,1):
 
    cabci=tact_behav(name='icci0',law='ELASTIC_WIRE', stiffness= 100.e+00*stiff_pen, prestrain=+0.00)
    tacts_tmp+=cabci
+
+   caban=tact_behav(name='adhes',law='ELASTIC_WIRE', stiffness= 1.0e+08*stiff_pen, prestrain=-0.00*pstr_pen)
+   tacts_tmp+=caban
 
    if (i == 0):
       tacts_stif = tacts_tmp
@@ -705,6 +761,12 @@ for i in range(0,nb_focals,1):
       colorCandidat=name,behav=cabsf, CorpsAntagoniste='RBDY3',
       antagoniste='PT3Dx',colorAntagoniste=nam2,alert=200.*sf_inc_max)
    svs+=vfosf
+
+vancr = see_table(CorpsCandidat='RBDY3',candidat='PT3Dx',
+   colorCandidat='FOCAL',behav=caban, CorpsAntagoniste='RBDY3',
+   antagoniste='PT3Dx',colorAntagoniste='PROTp',alert=8.*celb_part_gap)
+svs+=vancr
+
 
 ## for elastic_wire interaction (networks interactions)
 vmtmf = see_table(CorpsCandidat='RBDY3',candidat='PT3Dx',
