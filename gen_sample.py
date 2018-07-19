@@ -75,9 +75,9 @@ mod.addModel(modr)
 
 # Defining geometrical parameters of the cell and constituents (micrometers)
 ## Cell dimensions
-diam_cell = 30.
+diam_cell = 20.
 diam_core = diam_cell/1.5
-lref = diam_cell/60.
+lref = diam_cell/40.
 xctr_cell = 0.
 yctr_cell = 0.
 zctr_cell = 0.
@@ -429,7 +429,7 @@ for i in range(0,nb_nodes_if,1):
   while 1:
      while 1:
         rad = random.gauss(diam_core/2.+2*corb_part_radii, diam_cell/2.)
-        if (rad>diam_core/2 + 2.*corb_part_radii + radii_part_networks and rad<max(diam_cell,diam_cm2)/2-radii_part_networks):
+        if (rad>diam_core/2 + 2.*corb_part_radii + radii_part_networks and rad<diam_cell/2-radii_part_networks):
             break
      theta = random.uniform(0., 2.*math.pi)
      phi = random.uniform(-math.pi/2., math.pi/2.)
@@ -437,10 +437,8 @@ for i in range(0,nb_nodes_if,1):
      py = yctr_cell+(rad)*(math.cos(phi)*math.sin(theta))
      pz = zctr_cell+(rad)*(math.sin(phi))
      dist_cell_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cell)**2.0)**0.5
-     dist_cell_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cm1)**2.0)**0.5
-     dist_cm2_cntr = ((px-xctr_cell)**2.0+(py-yctr_cell)**2.0+(pz-zctr_cm2)**2.0)**0.5
      if((dist_cell_cntr - radii_part_networks > diam_core/2. + core_part_radii) and
-        (dist_cell_cntr + radii_part_networks < diam_cell/2.) and (dist_cm2_cntr + radii_part_networks < diam_cm2/2.)):
+        (dist_cell_cntr + radii_part_networks < diam_cell/2.)):
         break
   center_if_node=numpy.array([px, py, pz])
 
@@ -492,10 +490,8 @@ for i in range(0,nb_focals,1):
            az = oz + (rad)*(math.sin(phi+phi_ref))
 
            dist_cell_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cell)**2.0)**0.5
-           dist_cell_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cm1)**2.0)**0.5
-           dist_cm2_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cm2)**2.0)**0.5
            if((dist_cell_cntr - fibers_part_radii > diam_core/2. + core_part_radii) and
-              (dist_cell_cntr + fibers_part_radii < diam_cell/2.) and (dist_cm2_cntr + fibers_part_radii < diam_cm2/2.)):
+              (dist_cell_cntr + fibers_part_radii < diam_cell/2.)):
               break
            if (ntry == 5001):
                theta_ref = -1.*theta_ref
@@ -514,13 +510,11 @@ for i in range(0,nb_focals,1):
               if(dist_unseen_focal < dist_min_unseen_focal):
                  dist_min_unseen_focal = dist_unseen_focal
                  closest_focal = j
-        dist_cell_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cm1)**2.0)**0.5
-        dist_cm2_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cm2)**2.0)**0.5
+        dist_cell_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cell)**2.0)**0.5
         dist_env1 = diam_cell/2. - dist_cell_cntr - fibers_part_radii
-        dist_env2 = diam_cm2/2. - dist_cm2_cntr - fibers_part_radii
 
         if(ntry < 10000):
-           if((dist_env1 < celb_part_radii or dist_env2 < celb_part_radii) and npart_fibre > 20): ## pour eviter la fin trop rapide de la generation
+           if(dist_env1 < celb_part_radii and npart_fibre > 20): ## pour eviter la fin trop rapide de la generation
               name='Se{1:{0}}'.format("03d",nfibre) ## point enveloppe dorsale
               body.addContactors(shape='PT3Dx', color=name)
               break
