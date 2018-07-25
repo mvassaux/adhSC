@@ -75,9 +75,9 @@ mod.addModel(modr)
 
 # Defining geometrical parameters of the cell and constituents (micrometers)
 ## Cell dimensions
-diam_cell = 20.
+diam_cell = 30.
 diam_core = diam_cell/1.5
-lref = diam_cell/40.
+lref = diam_cell/60.
 xctr_cell = 0.
 yctr_cell = 0.
 zctr_cell = 0.
@@ -227,95 +227,21 @@ for i in range(0,ctsl_part_nb,1):
       bodies2 += body
       ce_ls.append(body)
 
-#Proposition de modif du gen sampl pour deformer la cellule en cube : 
-
+# Generating the particles describing the focal adhesions and the proteins (on the substrate)
+# they are bound to
+## Disposition of the proteins into the shape of a cube
 phi=math.pi/4.
 theta=math.pi/2.
-rad=radii_celb + celb_part_gap
-
-i=-1
-j=1
-k=0
-coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
-coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap 
-coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
-coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
-coor_focals[3*k + 2] = rad*-1.*(1./3.)**0.5
-coor_protei[3*k + 2] = rad*-1.*(1./3.)**0.5 + ((rad*-1.*(1./3.)**0.5)**2.0)**0.5/(rad*-1.*(1./3.)**0.5)*2.*celb_part_gap
-
- 
-i=-1
-j=2
-k=1
-coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
-coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap 
-coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
-coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
-coor_focals[3*k + 2] = rad*-1.*(1./3.)**0.5
-coor_protei[3*k + 2] = rad*-1.*(1./3.)**0.5 + ((rad*-1.*(1./3.)**0.5)**2.0)**0.5/(rad*-1.*(1./3.)**0.5)*2.*celb_part_gap
- 
-i=-1
-j=3
-k=2
-coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
-coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap 
-coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
-coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
-coor_focals[3*k + 2] = rad*-1.*(1./3.)**0.5
-coor_protei[3*k + 2] = rad*-1.*(1./3.)**0.5 + ((rad*-1.*(1./3.)**0.5)**2.0)**0.5/(rad*-1.*(1./3.)**0.5)*2.*celb_part_gap
- 
-i=-1
-j=4
-k=3
-coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
-coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap 
-coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
-coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
-coor_focals[3*k + 2] = rad*-1.*(1./3.)**0.5
-coor_protei[3*k + 2] = rad*-1.*(1./3.)**0.5 + ((rad*-1.*(1./3.)**0.5)**2.0)**0.5/(rad*-1.*(1./3.)**0.5)*2.*celb_part_gap
- 
-i=1
-j=1
-k=4
-coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
-coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap 
-coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
-coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
-coor_focals[3*k + 2] = rad*(1./3.)**0.5
-coor_protei[3*k + 2] = rad*(1./3.)**0.5 + ((rad*(1./3.)**0.5)**2.0)**0.5/(rad*(1./3.)**0.5)*2.*celb_part_gap
-
-i=1
-j=2
-k=5
-coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
-coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap 
-coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
-coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
-coor_focals[3*k + 2] = rad*(1./3.)**0.5
-coor_protei[3*k + 2] = rad*(1./3.)**0.5 + ((rad*(1./3.)**0.5)**2.0)**0.5/(rad*(1./3.)**0.5)*2.*celb_part_gap
-
-i=1
-j=3
-k=6
-coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
-coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap 
-coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
-coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
-coor_focals[3*k + 2] = rad*(1./3.)**0.5
-coor_protei[3*k + 2] = rad*(1./3.)**0.5 + ((rad*(1./3.)**0.5)**2.0)**0.5/(rad*(1./3.)**0.5)*2.*celb_part_gap
-
-i=1
-j=4
-k=7
-coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
-coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap 
-coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
-coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
-coor_focals[3*k + 2] = rad*(1./3.)**0.5
-coor_protei[3*k + 2] = rad*(1./3.)**0.5 + ((rad*(1./3.)**0.5)**2.0)**0.5/(rad*(1./3.)**0.5)*2.*celb_part_gap
-
-
- 
+rad=radii_celb #+ celb_part_gap
+for k in range(8):
+    j=(k%4)+1
+    i=int(k/4)*2-1
+    coor_focals[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j)
+    coor_protei[3*k + 0] = rad*(2./3.)**0.5*math.cos(theta*j) + ((rad*(2./3.)**0.5*math.cos(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.cos(theta*j))*2.*celb_part_gap
+    coor_focals[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j)
+    coor_protei[3*k + 1] = rad*(2./3.)**0.5*math.sin(theta*j) + ((rad*(2./3.)**0.5*math.sin(theta*j))**2.0)**0.5/(rad*(2./3.)**0.5*math.sin(theta*j))*2.*celb_part_gap
+    coor_focals[3*k + 2] = rad*i*(1./3.)**0.5
+    coor_protei[3*k + 2] = rad*i*(1./3.)**0.5 + ((rad*i*(1./3.)**0.5)**2.0)**0.5/(rad*i*(1./3.)**0.5)*2.*celb_part_gap
 for i in range(0,nb_focals,1):
    for phase in range(0,2,1):
       body=rigidSphere(r=1.*celb_part_radii,
@@ -337,7 +263,6 @@ for i in range(0,nb_focals,1):
 #         vspread = 0.
 #         hspread = 0.
          bodies2 += body
- 
 for i in range(0,nb_focals,1):
    for phase in range(0,2,1):
       body=rigidSphere(r=1.*celb_part_radii,
@@ -361,7 +286,6 @@ for i in range(0,nb_focals,1):
       body.imposeDrivenDof(component=1, description='predefined', ct=charinc*coor_protei[3*i + 0], amp=0., omega=0., phi=0., rampi=hspread, ramp=0., dofty='vlocy')
       body.imposeDrivenDof(component=2, description='predefined', ct=charinc*coor_protei[3*i + 1], amp=0., omega=0., phi=0., rampi=hspread, ramp=0., dofty='vlocy')
       body.imposeDrivenDof(component=3, description='predefined', ct=charinc*coor_protei[3*i + 2], amp=0., omega=0., phi=0., rampi=vspread, ramp=0., dofty='vlocy')
- 
 
 # Generating the particles of the microfilaments network (randomly oriented and
 # homogeneously distributed in the radial direction)
@@ -455,6 +379,7 @@ seen_focals = numpy.zeros((nb_focals+1), dtype='i')
 numfibre_focals = numpy.zeros((nb_focals+1), dtype='i')
 nfibre = 0
 for i in range(0,nb_focals,1):
+  print("-- generation stress fibre #"+str(i)+"... adding particle: ", end="", flush=True)
   npart_fibre = 0
   if(seen_focals[i] == 0):
      numfibre_focals[i] = nfibre
@@ -470,9 +395,9 @@ for i in range(0,nb_focals,1):
      cos_theta_ref = (xctr_cell-ax)/(dist_cell_cntr*math.cos(phi_ref))
      sin_theta_ref = (yctr_cell-ay)/(dist_cell_cntr*math.cos(phi_ref))
      if (sin_theta_ref > 0.):
-        theta_ref = math.acos(cos_theta_ref)
+        theta_ref = math.acos(round(cos_theta_ref, 10))
      else:
-        theta_ref = 2.*math.pi - math.acos(cos_theta_ref)
+        theta_ref = 2.*math.pi - math.acos(round(cos_theta_ref, 10))
 
      while 1:
         ox = ax
@@ -491,9 +416,10 @@ for i in range(0,nb_focals,1):
 
            dist_cell_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cell)**2.0)**0.5
            if((dist_cell_cntr - fibers_part_radii > diam_core/2. + core_part_radii) and
-              (dist_cell_cntr + fibers_part_radii < diam_cell/2.)):
+              (dist_cell_cntr + fibers_part_radii < radii_celb)):
               break
            if (ntry == 5001):
+               print("changing direction...", end="", flush=True)
                theta_ref = -1.*theta_ref
                phi_ref = -1.*phi_ref
 
@@ -501,6 +427,7 @@ for i in range(0,nb_focals,1):
         name='Ss{1:{0}}'.format("03d",nfibre)
         body=rigidSphere(r=1.*fibers_part_radii, center=center_sf_node,
            model=modr, material=cell, color=name)
+        print(str(npart_fibre)+"... ", end="", flush=True)
 
         dist_min_unseen_focal = diam_cell/2.
         closest_focal = i
@@ -511,7 +438,7 @@ for i in range(0,nb_focals,1):
                  dist_min_unseen_focal = dist_unseen_focal
                  closest_focal = j
         dist_cell_cntr = ((ax-xctr_cell)**2.0+(ay-yctr_cell)**2.0+(az-zctr_cell)**2.0)**0.5
-        dist_env1 = diam_cell/2. - dist_cell_cntr - fibers_part_radii
+        dist_env1 = radii_celb - dist_cell_cntr - fibers_part_radii
 
         if(ntry < 10000):
            if(dist_env1 < celb_part_radii and npart_fibre > 20): ## pour eviter la fin trop rapide de la generation
@@ -536,6 +463,7 @@ for i in range(0,nb_focals,1):
      bodies1 += body
      bodies2 += body
      ce_ls.append(body)
+     print("end fibre.")
      nfibre +=1
 nb_fibres = nfibre
 

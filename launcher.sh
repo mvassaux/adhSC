@@ -21,7 +21,7 @@ python ./gen_sample.py $nsteps_sprd $dt_sprd $nsteps_stbl $dt_stbl $noutp_sprd
 # Simulation of the spreading phase
 echo "###  PHASE 1 - SPREADING OF THE CELL ###"
 cp -r DATBOX_SPRD DATBOX
-python ./command.py $nsteps_sprd $dt_sprd $noutp $ndisp_sprd
+python ./command.py $nsteps_sprd $dt_sprd $noutp_sprd $ndisp_sprd
 rm -r phase_1
 mkdir phase_1/
 cp -r DATBOX phase_1/
